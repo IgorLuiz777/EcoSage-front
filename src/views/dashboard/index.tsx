@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { EnergyUsage } from "@/components/energyEsage";
+import { EnergyUsageTable } from "@/components/energyEsage";
 
 export default function Dashboard() {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -36,6 +36,31 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Total Power Generation</CardTitle>
+            <CardDescription>12,350 kW</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Active Turbines</CardTitle>
+            <CardDescription>23 of 25</CardDescription>
+          </CardHeader>
+        </Card>
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Daily Average Consumption</CardTitle>
+            <CardDescription>450 kW</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+
+      <div>
+        Grafico
+      </div>
 
       <div>
         <p className="text-lg mb-4">Equipamentos Cadastrados</p>
@@ -71,7 +96,7 @@ export default function Dashboard() {
         </div>
       </div>
       <div>
-        <EnergyUsage />
+        <EnergyUsageTable />
       </div>
     </div>
   );

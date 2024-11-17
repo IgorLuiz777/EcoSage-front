@@ -7,82 +7,92 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { Button } from "../ui/button"
+import { Plus } from "lucide-react"
+import { useEffect, useState } from "react"
+import { EnergyUsage } from "@/types/EnergyUsage"
+import { getAllEnergyUsage } from "@/service/EnergyUsage"
 
-const invoices = [
-    {
-        invoice: "INV001",
-        paymentStatus: "Paid",
-        totalAmount: "$250.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV002",
-        paymentStatus: "Pending",
-        totalAmount: "$150.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV003",
-        paymentStatus: "Unpaid",
-        totalAmount: "$350.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV004",
-        paymentStatus: "Paid",
-        totalAmount: "$450.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV005",
-        paymentStatus: "Paid",
-        totalAmount: "$550.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV006",
-        paymentStatus: "Pending",
-        totalAmount: "$200.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV007",
-        paymentStatus: "Unpaid",
-        totalAmount: "$300.00",
-        paymentMethod: "Credit Card",
-    },
-]
+export function EnergyUsageTable() {
+    const [energyUsage, setEnergyUsage] = useState<EnergyUsage[]>([])
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
-export function EnergyUsage() {
+    useEffect(() => {
+        const fetchEnergyUsage = async () => {
+            try {
+                const data = await getAllEnergyUsage();
+                setEnergyUsage(data);
+            } catch (err) {
+                console.error("Error fetching equipments:", err);
+                setError("Não foi possível carregar a tabela.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEnergyUsage();
+    }, []);
+
+
     return (
         <div className="mt-4">
-            <p className="text-2xl p-1">Histórico de uso de energia</p>
-            <Table className="shadow-md">
-                <TableHeader>
+            <p className="text-2xl font-semibold p-1 text-gray-800">Histórico de uso de energia</p>
+            <Button className="bg-blue-500 text-white hover:bg-blue-600 transition duration-300">
+                <Plus />
+            </Button>
+            <Table className="shadow-lg rounded-lg overflow-hidden mt-4">
+                <TableHeader className="bg-gray-300">
                     <TableRow>
-                        <TableHead className="w-[100px]">Invoice</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Method</TableHead>
-                        <TableHead className="text-right">Amount</TableHead>
+                        <TableHead className="text-left text-gray-600">Energia Consumida</TableHead>
+                        <TableHead className="text-left text-gray-600">Dia inicial</TableHead>
+                        <TableHead className="text-left text-gray-600">Dia final</TableHead>
+                        <TableHead className="text-left text-gray-600">Consumo médio</TableHead>
+                        <TableHead className="text-left text-gray-600">Custo</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {invoices.map((invoice) => (
-                        <TableRow className="hover:bg-gray-200" key={invoice.invoice}>
-                            <TableCell className="font-medium ">{invoice.invoice}</TableCell>
-                            <TableCell className="">{invoice.paymentStatus}</TableCell>
-                            <TableCell className="">{invoice.paymentMethod}</TableCell>
-                            <TableCell className="text-right ">{invoice.totalAmount}</TableCell>
+                    {loading && (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-2xl text-gray-500">
+                                Carregando...
+                            </TableCell>
                         </TableRow>
-                    ))}
+                    )}
+                    {error && (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-red-500">
+                                {error}
+                            </TableCell>
+                        </TableRow>
+                    )}
+                    {!loading && !error && energyUsage.length === 0 && (
+                        <TableRow>
+                            <TableCell colSpan={5} className="text-center text-gray-500">
+                                Nenhum equipamento cadastrado.
+                            </TableCell>
+                        </TableRow>
+                    )}
+                    {
+                        !loading && !error &&
+                        energyUsage.map((e) => (
+                            <TableRow className="bg-gray-100 hover:bg-gray-200 transition duration-300" key={e.id}>
+                                <TableCell className="font-medium text-gray-700 hover:bg-gray-200 bg-gray-100">{e.totalConsumedEnergy} W</TableCell>
+                                <TableCell className="font-medium text-gray-700 hover:bg-gray-200 bg-gray-100">{new Date(e.startDate).toLocaleDateString()}</TableCell>
+                                <TableCell className="text-gray-700 hover:bg-gray-200 bg-gray-100">{new Date(e.endDate).toLocaleDateString()}</TableCell>
+                                <TableCell className="text-gray-700 hover:bg-gray-200 bg-gray-100">{e.averageDailyConsumption} hrs (diário)</TableCell>
+                                <TableCell className="text-gray-700 hover:bg-gray-200 bg-gray-100">R$ {e.totalCost}</TableCell>
+                            </TableRow>
+                        ))
+                    }
                 </TableBody>
-                <TableFooter>
+                <TableFooter className="bg-gray-300">
                     <TableRow className="hover:bg-gray-200">
-                        <TableCell colSpan={3}>Total</TableCell>
-                        <TableCell className="text-right">$2,500.00</TableCell>
+                        <TableCell colSpan={4} className="font-semibold text-gray-700">Total</TableCell>
+                        <TableCell className="text-right font-semibold text-gray-700">$2,500.00</TableCell>
                     </TableRow>
                 </TableFooter>
             </Table>
         </div>
-    )
+    );
 }

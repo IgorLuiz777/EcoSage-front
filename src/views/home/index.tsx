@@ -7,7 +7,7 @@ export default function Home() {
     return(
         <div className="m-4">
             <h1>HOME</h1>
-            <Button onClick={() => navigator('/equipments')} className="">Adicionar equipamentos</Button>
+            <Button onClick={() => navigator('/dashboard')} className="">Adicionar equipamentos</Button>
         </div>
     )
 
