@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EnergyUsageTable } from "@/components/energyEsage";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const [equipments, setEquipments] = useState<Equipment[]>([]);
@@ -56,6 +57,11 @@ export default function Dashboard() {
             <CardDescription>450 kW</CardDescription>
           </CardHeader>
         </Card>
+      </div>
+
+      <div>
+        <p>Quer dicas para economizar?</p>
+        <p>Fale com a nossa IA: <Link to="/chat">clique aqui</Link></p>
       </div>
 
       <div>
